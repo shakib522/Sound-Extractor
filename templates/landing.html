@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Extraction API - AI-Powered Music Separation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-links a:hover {
+            color: #ffd700;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #333;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+        }
+
+        /* API Section */
+        .api-section {
+            padding: 80px 0;
+            background: #2c3e50;
+            color: white;
+        }
+
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .api-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .api-card h3 {
+            color: #ffd700;
+            margin-bottom: 1rem;
+        }
+
+        .api-card p {
+            color: #ecf0f1;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            text-align: left;
+            margin-top: 1rem;
+        }
+
+        .feature-list li {
+            color: #bdc3c7;
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(180deg, #232526 0%, #1a1a1a 100%);
+            color: white;
+            padding: 64px 0 0 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .footer-top-border {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #ffd700 0%, #764ba2 100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .footer-brand {
+            margin-bottom: 0.2rem;
+            text-align: center;
+        }
+
+        .footer-brand h3 {
+            margin-bottom: 0.2rem;
+            font-size: 1.6rem;
+            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(90deg, #ffd700 30%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            justify-content: center;
+        }
+
+        .footer-tagline {
+            color: #ffd700;
+            font-size: 1.08rem;
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.01em;
+            text-align: center;
+        }
+
+        .footer-brand p {
+            color: #bbb;
+            font-size: 1.01rem;
+            margin-bottom: 0.2rem;
+            text-align: center;
+        }
+
+        .footer-divider {
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, #ffd700 0%, #764ba2 100%);
+            border-radius: 2px;
+            margin: 0.7rem auto 1.2rem auto;
+        }
+
+        .footer-social-row {
+            margin: 0.5rem 0 0.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            text-align: center;
+        }
+        .footer-social-label {
+            color: #bbb;
+            font-size: 0.98rem;
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.01em;
+            text-align: center;
+        }
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.1rem;
+            justify-content: center;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.8rem;
+            transition: color 0.3s, box-shadow 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            padding: 8px;
+        }
+
+        .social-links a:hover {
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.08);
+            box-shadow: 0 0 12px #ffd70099;
+            transform: translateY(-3px) scale(1.18);
+        }
+
+        .footer-bottom {
+            margin-top: 2.2rem;
+            color: #aaa;
+            font-size: 0.93rem;
+            letter-spacing: 0.01em;
+            padding-bottom: 18px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">
+                <i class="fas fa-music"></i> AudioExtract
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="/docs" target="_blank">API</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="fade-in-up">AI-Powered Audio Separation</h1>
+            <p class="fade-in-up">Extract vocals and music from any audio file using advanced machine learning technology</p>
+            <div class="cta-buttons fade-in-up">
+                <a href="#api" class="btn btn-primary">
+                    <i class="fas fa-code"></i> View API Specs
+                </a>
+                <a href="http://localhost:8000/docs" class="btn btn-secondary">
+                    <i class="fas fa-rocket"></i> Try It Now
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Powerful Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <h3>Vocals Extraction</h3>
+                    <p>Separate crystal-clear vocals from background music with high precision using Spleeter AI models.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-guitar"></i>
+                    </div>
+                    <h3>Multi-Stem Separation</h3>
+                    <p>Extract vocals, drums, bass, piano, and other instruments into separate tracks.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Ready</h3>
+                    <p>RESTful API designed for mobile apps with CORS support and async processing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h3>Cloud Deployable</h3>
+                    <p>Docker-ready with easy deployment to AWS, GCP, Azure, or any cloud platform.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <h3>Quality Control</h3>
+                    <p>Choose from high, medium, or low quality outputs to optimize file size and processing speed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Free & Open Source</h3>
+                    <p>Built with free ML models (Spleeter) - no licensing costs or proprietary dependencies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Upload Audio</h3>
+                    <p>Upload your audio file (MP3, WAV, M4A, FLAC, OGG) up to 50MB</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>AI Processing</h3>
+                    <p>Our Spleeter AI model analyzes and separates the audio into multiple tracks</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Download Results</h3>
+                    <p>Download your separated vocals and music files in high quality</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Section -->
+    <section id="api" class="api-section">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">API Integration</h2>
+            <div class="api-grid">
+                <div class="api-card">
+                    <h3><i class="fas fa-upload"></i> Upload & Process</h3>
+                    <p>Upload your audio file (MP3, WAV, M4A, FLAC, OGG) up to 50MB. The API will return a task ID.</p>
+                    <ul class="feature-list">
+                        <li>Supported formats: MP3, WAV, M4A, FLAC, OGG</li>
+                        <li>Maximum file size: 50MB</li>
+                        <li>Async processing (returns task ID)</li>
+                        <li>CORS support for frontend integration</li>
+                    </ul>
+                </div>
+                <div class="api-card">
+                    <h3><i class="fas fa-clock"></i> Check Status</h3>
+                    <p>Use the task ID to check the status of your audio processing request.</p>
+                    <ul class="feature-list">
+                        <li>Returns "completed", "failed", or "processing"</li>
+                        <li>Includes download URLs when completed</li>
+                        <li>Task ID is valid for 24 hours</li>
+                    </ul>
+                </div>
+                <div class="api-card">
+                    <h3><i class="fas fa-download"></i> Download Files</h3>
+                    <p>Once your audio is processed, you can download the separated tracks.</p>
+                    <ul class="feature-list">
+                        <li>Download separated vocals and accompaniment tracks</li>
+                        <li>High-quality output (16-bit, 44.1kHz)</li>
+                        <li>Supports various audio formats</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3><i class="fas fa-music"></i> AudioExtract API</h3>
+                    <p>Powered by Spleeter AI • FastAPI • Python</p>
+                </div>
+
+            </div>
+            <p class="footer-bottom">
+                © 2024 AudioExtract API. Built with ❤️ for developers and music enthusiasts.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add fade-in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all feature cards and steps
+        document.querySelectorAll('.feature-card, .step').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html> 
