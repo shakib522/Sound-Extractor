@@ -59,7 +59,7 @@ async def startup_event():
 @app.get("/")
 async def root(request: Request):
     """Serve the landing page using Jinja2 templates"""
-    return templates.TemplateResponse("landing.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/health")
