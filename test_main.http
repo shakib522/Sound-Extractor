@@ -1,0 +1,79 @@
+# Audio Extraction API Tests
+
+### Health Check
+GET http://127.0.0.1:8000/health
+Accept: application/json
+
+###
+
+### Get API Info
+GET http://127.0.0.1:8000/
+Accept: application/json
+
+###
+
+### Get Supported Formats
+GET http://127.0.0.1:8000/supported-formats
+Accept: application/json
+
+###
+
+### Upload and Extract Audio (Vocals + Accompaniment)
+POST http://127.0.0.1:8000/extract-audio
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="sample.mp3"
+Content-Type: audio/mpeg
+
+< ./sample.mp3
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="separation_type"
+
+vocals_accompaniment
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="quality"
+
+high
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+### Upload and Extract Audio (Vocals + Drums + Bass + Other)
+POST http://127.0.0.1:8000/extract-audio
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="sample.mp3"
+Content-Type: audio/mpeg
+
+< ./sample.mp3
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="separation_type"
+
+vocals_drums_bass_other
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="quality"
+
+medium
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+### Check Processing Status (replace {task_id} with actual task ID)
+GET http://127.0.0.1:8000/status/{task_id}
+Accept: application/json
+
+###
+
+### Download Processed File (replace {task_id} and {filename})
+GET http://127.0.0.1:8000/download/{task_id}/vocals.wav
+Accept: audio/wav
+
+###
+
+### Delete Task (replace {task_id})
+DELETE http://127.0.0.1:8000/tasks/{task_id}
+Accept: application/json
+
+###
