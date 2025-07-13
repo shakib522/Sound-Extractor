@@ -1,12 +1,18 @@
 
-import logging
+import os
+import shutil
 from pathlib import Path
-import aiofiles
-from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
+from typing import List
+from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks, Request
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+import aiofiles
+import logging
+
+from .models import AudioExtractionRequest, AudioExtractionResponse, ProcessingStatus, SeparationType
 from .audio_processor import AudioProcessor
-from .models import AudioExtractionResponse, ProcessingStatus, SeparationType
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -28,13 +34,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# Setup Jinja2 templates
+templates = Jinja2Templates(directory="templates")
+
 # Initialize audio processor
 audio_processor = AudioProcessor()
 
 # Create necessary directories
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
-
 
 @app.on_event("startup")
 async def startup_event():
@@ -47,15 +56,10 @@ async def startup_event():
         logger.error(f"Failed to initialize API: {e}")
         raise
 
-
 @app.get("/")
-async def root():
-    """Root endpoint"""
-    return {
-        "message": "Audio Extraction API",
-        "version": "1.0.0",
-        "status": "running"
-    }
+async def root(request: Request):
+    """Serve the landing page using Jinja2 templates"""
+    return templates.TemplateResponse("landing.html", {"request": request})
 
 
 @app.get("/health")

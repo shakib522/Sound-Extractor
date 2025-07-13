@@ -90,3 +90,7 @@ separated_audio/
 .env.local
 .env.production
 .env.development
+
+# Keep template structure but ignore compiled templates
+templates/**/*.pyc
+static/**/*.pyc
